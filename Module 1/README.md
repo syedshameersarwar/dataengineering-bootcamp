@@ -1,4 +1,4 @@
-# dataengineering-bootcamp# Module 1 Homework: Docker & SQL - Solution
+# Module 1 Homework: Docker & SQL - Solution
 
 This repository contains my solution for Module 1 of the Data Engineering Zoomcamp, covering Docker, SQL, and Terraform.
 
