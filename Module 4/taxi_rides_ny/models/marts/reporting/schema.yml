@@ -1,0 +1,87 @@
+models:
+  - name: fct_monthly_zone_revenue
+    description: Monthly revenue aggregation by pickup zone and service type for business reporting
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - pickup_zone
+              - revenue_month
+              - service_type
+    columns:
+      - name: pickup_zone
+        description: Pickup zone where revenue was generated
+        data_tests:
+          - not_null
+      - name: revenue_month
+        description: Month for revenue aggregation
+        data_tests:
+          - not_null
+      - name: service_type
+        description: Service type (Green or Yellow)
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Green', 'Yellow']
+      - name: revenue_monthly_total_amount
+        description: Monthly sum of total fares
+        data_tests:
+          - not_null
+      - name: total_monthly_trips
+        description: Count of trips in the month
+        data_tests:
+          - not_null
+  
+  - name: count_record_monthly_zone_revenue
+    description: >
+      Returns the count of records for fct_monthly_zone_revenue
+      Grain: exactly one row.
+    columns:
+      - name: count
+        description: Count of records in fct_monthly_zone_revenue
+        data_type: integer
+        data_tests:
+          - not_null
+  
+  
+  - name: top_green_zone_revenue_2020
+    description: >
+      Returns the pickup zone with the highest total revenue
+      (revenue_monthly_total_amount) for Green taxi trips in 2020.
+      Grain: exactly one row.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments: 
+            expression: "total_revenue >= 0"
+      - dbt_expectations.expect_table_row_count_to_equal:
+          arguments: 
+            value: 1
+    columns:
+      - name: pickup_zone
+        description: Pickup zone with the highest total revenue in 2020 for Green taxis.
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        description: Total revenue in 2020 for the pickup zone (Green taxis only).
+        data_tests:
+          - not_null
+    
+
+  - name: total_green_trips_oct_2019
+    description: >
+      Returns total number of trips for Green taxi service in Oct 2019
+      Grain: exactly one row.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          arguments: 
+            expression: "total_trips >= 0"
+      - dbt_expectations.expect_table_row_count_to_equal:
+          arguments: 
+            value: 1
+    columns:
+      - name: total_trips
+        description: Count of trips in Oct 2019 for Green taxi service
+        data_tests:
+          - not_null
